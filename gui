@@ -1,5 +1,5 @@
 --[[
-	--@ azurion_under: remake this library(2025).
+	--@ azurion_under: rewrite.
 --]]
 
 
@@ -656,26 +656,30 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	AddDraggingFunctionality(DragPoint, MainWindow)
 
-	AddConnection(CloseBtn.MouseButton1Up, function()
-		MainWindow.Visible = false
-		UIHidden = true
+	AddConnection(UserInputService.InputBegan, function(Input)
+		if Input.KeyCode == Enum.KeyCode.RightControl then
+			MainWindow.Visible = not MainWindow.Visible
+			UIHidden = not MainWindow.Visible
 
-		TohruLib:MakeNotification({
-			Name = "🔒 Interface Hidden",
-			Content = "Press Right Control to open the interface again.",
-			Time = 5
-		})
-
-		-- Call the close callback if it exists
-		if WindowConfig.CloseCallback then
-			WindowConfig.CloseCallback()
+			if MainWindow.Visible then
+				TohruLib:MakeNotification({
+					Name = "🔓 Interface Shown",
+					Content = "Press Right Control to hide the interface.",
+					Time = 5
+				})
+			else
+				TohruLib:MakeNotification({
+					Name = "🔒 Interface Hidden",
+					Content = "Press Right Control to open the interface again.",
+					Time = 5
+				})
+			end
 		end
-
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightControl and UIHidden then
-			MainWindow.Visible = true
+		if Input.KeyCode == Enum.KeyCode.RightControl then
+			MainWindow.Visible = not MainWindow.Visible
 		end
 	end)
 
@@ -1728,6 +1732,7 @@ function TohruLib:MakeWindow(WindowConfig)
 			})
 		end
 		return ElementFunction
+%
 	end  
 	
 	return TabFunction
