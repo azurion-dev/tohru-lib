@@ -619,7 +619,7 @@ function TohruLib:MakeWindow(WindowConfig)
 			BackgroundTransparency = 1,
 			TextColor3 = Color3.fromRGB(255, 255, 255),
 			PlaceholderColor3 = Color3.fromRGB(210,210,210),
-			PlaceholderText = WindowConfig.SearchBar.Default or "🔍 Search",
+			PlaceholderText = WindowConfig.SearchBar.Default or "Search",
 			Font = Enum.Font.GothamBold,
 			TextWrapped = true,
 			Text = '',
@@ -711,7 +711,7 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	local _currentKey = Enum.KeyCode.RightShift;
 	local isMobile = table.find({ Enum.Platform.IOS, Enum.Platform.Android }, UserInputService:GetPlatform());
-	local MobileIcon = SetChildren(SetProps(MakeElement("ImageButton", "http://www.roblox.com/asset/?id="), {
+	local MobileIcon = SetChildren(SetProps(MakeElement("ImageButton", "http://www.roblox.com/asset/?id=5850308301"), {
 		Position = UDim2.new(0.25, 0, 0.1, 0);
 		Size = UDim2.new(0, 32, 0, 33);
 		-- Position = UDim2.new(0.52, 0, 0, 0);
@@ -723,30 +723,51 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	MakeDraggable(MobileIcon, MobileIcon)
 
-	AddConnection(MobileIcon.MouseButton1Click, function()
-		MainWindow.Visible = true;
-		MobileIcon.Visible = false;
+	AddDraggingFunctionality(DragPoint, MainWindow)
+	AddConnection(UserInputService.InputBegan, function(inp)
+		if inp.KeyCode == Enum.KeyCode.RightControl then
+			MainWindow.Visible = not MainWindow.Visible
+			UIHidden = not MainWindow.Visible
+			TohruLib:MakeNotification({
+				Name    = UIHidden and "🔒 Interface oculta" or "🔓 Interface mostrada",
+				Content = UIHidden and "Pressione <b>Right Control</b> para abrir." or "Pressione <b>Right Control</b> para ocultar.",
+				Time    = 5,
+			})
+		end
 	end)
 
+	-- Ícone mobile
+	AddConnection(MobileIcon.MouseButton1Click, function()
+		MainWindow.Visible = true
+		UIHidden = false
+		MobileIcon.Visible = false
+		TohruLib:MakeNotification({
+			Name    = "🔓 Interface mostrada",
+			Content = "Toque no ícone para ocultar.",
+			Time    = 5,
+		})
+	end)
+
+	-- Botão fechar
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
-
 		if UserInputService.TouchEnabled then
-			MobileIcon.Visible = true;
+			MobileIcon.Visible = true
 		end
-
 		TohruLib:MakeNotification({
-			Name = "Interface fechada",
-			Content = (isMobile and 'Clique na <b>Icon' or 'Pressione a tecla <b>' .. _currentKey.Name) .. "</b> para abrir a GUI novamente!",
-			Time = 5
+			Name    = "🔒 Interface oculta",
+			Content = UIHidden and (UserInputService.TouchEnabled
+				and "Toque no ícone para abrir."
+				or "Pressione <b>Right Control</b> para abrir."),
+			Time    = 5,
 		})
 		WindowConfig.CloseCallback()
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
 		if Input.KeyCode == _currentKey then
-			MobileIcon.Visible = false; -- Ja que ele usou Teclado, creio que precisa esconder icone de mobile. 
+			MobileIcon.Visible = false; 
 			MainWindow.Visible = not MainWindow.Visible;
 		end
 	end)
