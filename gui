@@ -500,9 +500,12 @@ function TohruLib:MakeWindow(WindowConfig)
         makefolder(WindowConfig.ConfigFolder)
     end
 
+	 local Tabs = {}
+
     -- container de abas
-    local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255,255,255),4), {
-        Size = UDim2.new(1,0,1, -50),
+    local TabHolder = AddThemeObject( SetChildren( SetProps(MakeElement("ScrollFrame", Color3.new(1,1,1), 4), {
+        Size = UDim2.new(1, 0, 1, WindowConfig.SearchBar and -90 or -50),
+        Position = WindowConfig.SearchBar and UDim2.new(0,0,0,40) or UDim2.new(0,0,0,50)
     }), {
         MakeElement("List"),
         MakeElement("Padding", 8,0,0,8),
@@ -552,7 +555,7 @@ function TohruLib:MakeWindow(WindowConfig)
     }),"Second")
 
     -- se busca ativada, monta SearchBar
-    local Tabs = {}
+
     if WindowConfig.SearchBar then
         local SearchBox = Create("TextBox",{
             Size             = UDim2.new(1,0,1,0),
@@ -700,9 +703,10 @@ function TohruLib:MakeWindow(WindowConfig)
         local pOnly= TabConfig.PremiumOnly or false
 
         -- botão da aba
-        local TabFrame = SetChildren(SetProps(MakeElement("Button"),{
-            Size = UDim2.new(1,0,0,30), Parent = TabHolder
-        }),{
+		local TabFrame = SetChildren( SetProps(MakeElement("Button"), {
+			Size   = UDim2.new(1,0,0,30),
+			Parent = TabHolder,
+		}), {
             AddThemeObject(SetProps(MakeElement("Image", ico),{
                 AnchorPoint = Vector2.new(0,0.5), Size=UDim2.new(0,18,0,18),
                 Position=UDim2.new(0,10,0.5,0), ImageTransparency=0.4, Name="Ico"
@@ -714,7 +718,7 @@ function TohruLib:MakeWindow(WindowConfig)
         })
 
         -- registra para busca
-        Tabs[name] = TabFrame
+        Tabs[ TabConfig.Name ] = TabFrame
 
         -- ícone custom
         if GetIcon(ico) then TabFrame.Ico.Image = GetIcon(ico) end
