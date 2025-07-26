@@ -697,7 +697,7 @@ function KanaGui:MakeWindow(WindowConfig)
 	}), "Main")
 
     
-	local _currentKey = Enum.KeyCode.Del;
+	local _currentKey = Enum.KeyCode.DEL;
 	local isMobile = table.find({ Enum.Platform.IOS, Enum.Platform.Android }, UserInputService:GetPlatform());
 	local MobileIcon = SetChildren(SetProps(MakeElement("ImageButton", "http://www.roblox.com/asset/?id=5838254215"), {
 		Position = UDim2.new(0.25, 0, 0.1, 0);
@@ -705,7 +705,7 @@ function KanaGui:MakeWindow(WindowConfig)
 		-- Position = UDim2.new(0.52, 0, 0, 0);
 		-- Size = UDim2.new(0.045, 0, 0.089, 0);
 		-- Draggable = true;
-		Parent = Orion;
+		Parent = Kana;
 		Visible = false;
 	}), { MakeElement("Corner", 1, 0) });
 
@@ -1805,4 +1805,4 @@ end
         KanaGui:Destroy()
     end
 
-    return KanaGui
+    return Functions   
