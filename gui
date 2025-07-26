@@ -35,7 +35,7 @@ local TohruLib = {
 	SaveCfg = false
 }
 
---Feather icons - Created by 7kayoh
+--Feather Icons https://raw.githubusercontent.com/frappedevs/lucideblox/refs/heads/master/src/modules/util/icons.json - Created by 7kayoh
 local Icons = {}
 
 local Success, Response = pcall(function()
@@ -659,16 +659,22 @@ function TohruLib:MakeWindow(WindowConfig)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
+
 		TohruLib:MakeNotification({
-			Name = "Interface Hidden",
-			Content = "Tap RightShift to reopen the interface",
+			Name = "🔒 Interface Hidden",
+			Content = "Press Right Control to open the interface again.",
 			Time = 5
 		})
-		WindowConfig.CloseCallback()
+
+		-- Call the close callback if it exists
+		if WindowConfig.CloseCallback then
+			WindowConfig.CloseCallback()
+		end
+
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
+		if Input.KeyCode == Enum.KeyCode.RightControl and UIHidden then
 			MainWindow.Visible = true
 		end
 	end)
@@ -1681,11 +1687,15 @@ function TohruLib:MakeWindow(WindowConfig)
 		end
 
 		if TabConfig.PremiumOnly then
+			-- Substitui todas as funções por funções vazias para bloquear execução
 			for i, v in next, ElementFunction do
 				ElementFunction[i] = function() end
-			end    
+			end
+
+			-- Mantém a interface visual normal (com o aviso de premium)
 			Container:FindFirstChild("UIListLayout"):Destroy()
 			Container:FindFirstChild("UIPadding"):Destroy()
+
 			SetChildren(SetProps(MakeElement("TFrame"), {
 				Size = UDim2.new(1, 0, 1, 0),
 				Parent = ItemParent
@@ -1704,12 +1714,12 @@ function TohruLib:MakeWindow(WindowConfig)
 					Size = UDim2.new(0, 56, 0, 56),
 					Position = UDim2.new(0, 84, 0, 110),
 				}), "Text"),
-				AddThemeObject(SetProps(MakeElement("Label", "Premium Features", 14), {
+				AddThemeObject(SetProps(MakeElement("Label", "Premium Features (Beta)", 14), {
 					Size = UDim2.new(1, -150, 0, 14),
 					Position = UDim2.new(0, 150, 0, 112),
 					Font = Enum.Font.GothamBold
 				}), "Text"),
-				AddThemeObject(SetProps(MakeElement("Label", "This part of the script is locked to Sirius Premium users. Purchase Premium in the Discord server (discord.gg/sirius)", 12), {
+				AddThemeObject(SetProps(MakeElement("Label", "This tab is locked for Sirius Premium users. It's a beta tab and does not run any functions.", 12), {
 					Size = UDim2.new(1, -200, 0, 14),
 					Position = UDim2.new(0, 150, 0, 138),
 					TextWrapped = true,
@@ -1717,7 +1727,7 @@ function TohruLib:MakeWindow(WindowConfig)
 				}), "Text")
 			})
 		end
-		return ElementFunction   
+		return ElementFunction
 	end  
 	
 	return TabFunction
