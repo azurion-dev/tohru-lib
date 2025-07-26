@@ -697,7 +697,7 @@ function KanaGui:MakeWindow(WindowConfig)
 	}), "Main")
 
     
-	local _currentKey = Enum.KeyCode.DEL;
+	local _currentKey = Enum.KeyCode.Delete;
 	local isMobile = table.find({ Enum.Platform.IOS, Enum.Platform.Android }, UserInputService:GetPlatform());
 	local MobileIcon = SetChildren(SetProps(MakeElement("ImageButton", "http://www.roblox.com/asset/?id=5838254215"), {
 		Position = UDim2.new(0.25, 0, 0.1, 0);
@@ -736,7 +736,7 @@ function KanaGui:MakeWindow(WindowConfig)
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.DEL and UIHidden then
+		if Input.KeyCode == Enum.KeyCode.Delete and UIHidden then
 			MainWindow.Visible = true
 		end
 	end)
