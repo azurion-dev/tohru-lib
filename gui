@@ -8,9 +8,6 @@ local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
-local TemporaryRoles = {
-	[724324884] = "Developer"
-}
 
 local PARENT = game:GetService("CoreGui")
 --[[local PARENT = swift_internal_correct and game:GetService("CoreGui")
@@ -603,11 +600,6 @@ function TohruLib:MakeWindow(WindowConfig)
 				Font = Enum.Font.GothamBold,
 				ClipsDescendants = true
 			}), "Text"),
-			AddThemeObject(SetProps(MakeElement("Label", TemporaryRoles[LocalPlayer.UserId] or "User", 12), {
-				Size = UDim2.new(1, -60, 0, 12),
-				Position = UDim2.new(0, 50, 1, -25),
-				Visible = true
-			}), "TextDark")
 		}),
 	}), "Second")
 
@@ -721,54 +713,61 @@ function TohruLib:MakeWindow(WindowConfig)
 		Visible = false;
 	}), { MakeElement("Corner", 1, 0) });
 
+-- Allow dragging of the mobile icon
 	MakeDraggable(MobileIcon, MobileIcon)
 
-	AddDraggingFunctionality(DragPoint, MainWindow)
-	AddConnection(UserInputService.InputBegan, function(inp)
-		if inp.KeyCode == Enum.KeyCode.RightControl then
-			MainWindow.Visible = not MainWindow.Visible
-			UIHidden = not MainWindow.Visible
-			TohruLib:MakeNotification({
-				Name    = UIHidden and "🔒 Interface oculta" or "🔓 Interface mostrada",
-				Content = UIHidden and "Pressione <b>Right Control</b> para abrir." or "Pressione <b>Right Control</b> para ocultar.",
-				Time    = 5,
-			})
-		end
-	end)
-
-	-- Ícone mobile
+	-- Tap mobile icon to show the UI
 	AddConnection(MobileIcon.MouseButton1Click, function()
 		MainWindow.Visible = true
 		UIHidden = false
 		MobileIcon.Visible = false
+
 		TohruLib:MakeNotification({
-			Name    = "🔓 Interface mostrada",
-			Content = "Toque no ícone para ocultar.",
+			Name    = "🔓 Interface Shown",
+			Content = UserInputService.TouchEnabled
+				and "Tap the icon to hide the interface."
+				or ("Press <b>" .. _currentKey.Name .. "</b> to hide the interface."),
 			Time    = 5,
 		})
 	end)
 
-	-- Botão fechar
+	-- Close button hides the UI (and shows mobile icon on touch)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
+
 		if UserInputService.TouchEnabled then
 			MobileIcon.Visible = true
 		end
+
 		TohruLib:MakeNotification({
-			Name    = "🔒 Interface oculta",
-			Content = UIHidden and (UserInputService.TouchEnabled
-				and "Toque no ícone para abrir."
-				or "Pressione <b>Right Control</b> para abrir."),
+			Name    = "🔒 Interface Hidden",
+			Content = UserInputService.TouchEnabled
+				and "Tap the icon to open the interface again."
+				or ("Press <b>" .. _currentKey.Name .. "</b> to open the interface again."),
 			Time    = 5,
 		})
 		WindowConfig.CloseCallback()
 	end)
 
-	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == _currentKey then
-			MobileIcon.Visible = false; 
-			MainWindow.Visible = not MainWindow.Visible;
+	-- Keyboard shortcut (e.g. RightControl) toggles the UI
+	AddConnection(UserInputService.InputBegan, function(input)
+		if input.KeyCode == _currentKey then
+			UIHidden = not MainWindow.Visible
+			MainWindow.Visible = not MainWindow.Visible
+			MobileIcon.Visible = false
+
+			TohruLib:MakeNotification({
+				Name    = UIHidden and "🔒 Interface Hidden" or "🔓 Interface Shown",
+				Content = UIHidden
+					and (UserInputService.TouchEnabled
+						and "Tap the icon to open the interface again."
+						or ("Press <b>" .. _currentKey.Name .. "</b> to open the interface again."))
+					or (UserInputService.TouchEnabled
+						and "Tap the icon to hide the interface."
+						or ("Press <b>" .. _currentKey.Name .. "</b> to hide the interface.")),
+				Time    = 5,
+			})
 		end
 	end)
 
@@ -1846,6 +1845,37 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	return Functions;
 end   
+
+-- Define sua versão e se é estável ou não
+local version = "V1.6"
+local isStable = false  -- coloque `true` para versões estáveis
+
+-- Carrega a biblioteca
+print("Loading Tohru Library...")
+
+-- Se for estável, apenas mostra a versão
+if isStable then
+    print(version)
+else
+    -- Se for instável, printa aviso e mostra notificação
+    print("⚠️ Versão instável: " .. version)
+    TohruLib:MakeNotification({
+        Name    = "Tohru Library",
+        Content = "This version is unstable",
+        Image   = "alert-triangle",
+        Time    = 5,
+    })
+end
+
+warn("Finished")
+
+TohruLib:MakeNotification({
+    Name    = "Tohru Library",
+    Content = "By Azurion :3",
+    Image   = "rbxassetid://4483345998",
+    Time    = 5,
+})
+
 
 function TohruLib:Destroy()
 	Tohru:Destroy()
