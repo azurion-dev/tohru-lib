@@ -1825,4 +1825,5 @@ end
         KanaGui:Destroy()
     end
 
-    return Functions   
+    return KanaGui
+
