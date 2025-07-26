@@ -404,7 +404,7 @@ function TohruLib:MakeNotification(NotificationConfig)
 	spawn(function()
 		NotificationConfig.Name = NotificationConfig.Name or "Notification"
 		NotificationConfig.Content = NotificationConfig.Content or "Test"
-		NotificationConfig.Image = NotificationConfig.Image or "rbxassetid://14229447778"
+		NotificationConfig.Image = NotificationConfig.Image or "rbxassetid://122700469170163"
 		NotificationConfig.Time = NotificationConfig.Time or 15
 
 		local NotificationParent = SetProps(MakeElement("TFrame"), {
@@ -495,8 +495,8 @@ function TohruLib:MakeWindow(WindowConfig)
 	WindowConfig.IntroText = WindowConfig.IntroText or "Tohru Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
-	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://5838254768"
-	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://5838254768"
+	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://122700469170163"
+	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://122700469170163"
 	WindowConfig.SearchBar = WindowConfig.SearchBar or nil
 	TohruLib.Folder = WindowConfig.ConfigFolder
 	TohruLib.SaveCfg = WindowConfig.SaveConfig
