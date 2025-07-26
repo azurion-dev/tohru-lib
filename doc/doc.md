@@ -36,7 +36,7 @@ local Tab = Window:MakeTab({
 
 --[[
 Name = <string> - The name of the tab.
-Icon = <string>  - The icon of the tab. for pre-icons https://feathericons.com/
+Icon = <string>  - The icon of the tab. for pre-icons lucide.dev
 PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
 ]]
 ```
