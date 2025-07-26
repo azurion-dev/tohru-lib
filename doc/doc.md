@@ -3,7 +3,7 @@ This documentation is for the stable release of KanaGui Library.
 
 ## Booting the Library
 ```lua
-local KanaGui = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
+local KanaGui = loadstring(game:HttpGet(('https://raw.githubusercontent.com/qfbteam/kanagui/refs/heads/main/gui')))()
 ```
 
 
