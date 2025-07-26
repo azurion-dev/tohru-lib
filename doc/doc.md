@@ -3,7 +3,7 @@ This documentation is for the stable release of Tohru Library.
 
 ## Booting the Library
 ```lua
-local TohruLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/qfbteam/kanagui/refs/heads/main/gui')))()
+local TohruLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/azurion-dev/tohru-lib/refs/heads/main/gui')))()
 ```
 
 
