@@ -1,16 +1,16 @@
-# KanaGui Library
-This documentation is for the stable release of KanaGui Library.
+# Tohru Library
+This documentation is for the stable release of Tohru Library.
 
 ## Booting the Library
 ```lua
-local KanaGui = loadstring(game:HttpGet(('https://raw.githubusercontent.com/qfbteam/kanagui/refs/heads/main/gui')))()
+local TohruLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/qfbteam/kanagui/refs/heads/main/gui')))()
 ```
 
 
 
 ## Creating a Window
 ```lua
-local Window = KanaGui:MakeWindow({Name = "Title of the library", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Window = TohruLib:MakeWindow({Name = "Tohru Lib", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
 --[[
 Name = <string> - The name of the UI.
@@ -55,7 +55,7 @@ You can add elements to sections the same way you would add them to a tab normal
 
 ## Notifying the user
 ```lua
-KanaGui:MakeNotification({
+TohruLib:MakeNotification({
 	Name = "Title!",
 	Content = "Notification content... what will it say??",
 	Image = "rbxassetid://4483345998",
@@ -268,7 +268,7 @@ Dropdown:Set("dropdown option")
 # Finishing your script (REQUIRED)
 The below function needs to be added at the end of your code.
 ```lua
-KanaGui:Init()
+TohruLib:Init()
 ```
 
 ### How flags work.
@@ -295,5 +295,5 @@ Config files are made for every game the library is launched in.
 
 ## Destroying the Interface
 ```lua
-KanaGui:Destroy()
+TohruLib:Destroy()
 ```
