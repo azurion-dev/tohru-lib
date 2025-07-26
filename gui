@@ -796,6 +796,7 @@ function TohruLib:MakeWindow(WindowConfig)
 		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
 			Size = UDim2.new(1, 0, 0, 30),
 			Parent = TabHolder
+			Tabs[TabConfig.Name] = TabFrame
 		}), {
 			AddThemeObject(SetProps(MakeElement("Image", TabConfig.Icon), {
 				AnchorPoint = Vector2.new(0, 0.5),
@@ -812,6 +813,33 @@ function TohruLib:MakeWindow(WindowConfig)
 				Name = "Title"
 			}), "Text")
 		})
+
+		 Tabs[TabConfig.Name] = TabFrame
+
+	     AddConnection(TabFrame.MouseButton1Click, function()
+			for _, btn in ipairs(TabHolder:GetChildren()) do
+				if btn:IsA("TextButton") then
+					btn.Title.Font = Enum.Font.GothamSemibold
+					TweenService:Create(btn.Ico, TweenInfo.new(0.25), {ImageTransparency = 0.4}):Play()
+					TweenService:Create(btn.Title, TweenInfo.new(0.25), {TextTransparency = 0.4}):Play()
+				end
+			end
+			for _, cont in ipairs(MainWindow:GetChildren()) do
+				if cont.Name == "ItemContainer" then
+					cont.Visible = false
+				end
+			end
+			-- ativa esta aba
+			TweenService:Create(TabFrame.Ico, TweenInfo.new(0.25), {ImageTransparency = 0}):Play()
+			TweenService:Create(TabFrame.Title, TweenInfo.new(0.25), {TextTransparency = 0}):Play()
+			TabFrame.Title.Font = Enum.Font.GothamBlack
+			Container.Visible = true
+		end)
+
+		-- Cria e retorna as funções de elemento (botões, labels, etc) para esta aba…
+		local elementFuncs = GetElements(Container)
+		return elementFuncs
+	end
 
 		if GetIcon(TabConfig.Icon) ~= nil then
 			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
