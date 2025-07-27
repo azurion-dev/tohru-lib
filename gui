@@ -652,6 +652,7 @@ function TohruLib:MakeWindow(WindowConfig)
 
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
 
+	end
 
 
 
