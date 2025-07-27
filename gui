@@ -1,6 +1,4 @@
---[[
-	Tohru Lib © 2025 Azurion - Licenciada sob TLL (ver LICENSE.md)
-]]
+
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -8,12 +6,6 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
-
-
-local PARENT = game:GetService("CoreGui")
---[[local PARENT = swift_internal_correct and game:GetService("CoreGui")
-	or gethui and gethui()
-	or game:GetService("CoreGui")--]]
 
 local TohruLib = {
 	Elements = {},
@@ -39,7 +31,7 @@ local TohruLib = {
 local Icons = {}
 
 local Success, Response = pcall(function()
-	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/azurion-dev/tohru-lib/refs/heads/main/feather.json")).icons
+	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/evoincorp/lucideblox/master/src/modules/util/icons.json")).icons
 end)
 
 if not Success then
@@ -509,8 +501,8 @@ function TohruLib:MakeWindow(WindowConfig)
 		SetProps(
 			MakeElement("ScrollFrame", Color3.fromRGB(255,255,255), 4),
 			{
-			Size = UDim2.new(1, 0, 1, -90),
-			Position = UDim2.new(0, 0, 0, 40)
+			Size     = UDim2.new(1, 0, 1, -(50 + searchOffset)),   -- 50px de topo da janela + offset da SearchBar
+			Position = UDim2.new(0, 0, 0, 50 + searchOffset)
 			}
 		),
 		{
@@ -626,7 +618,7 @@ function TohruLib:MakeWindow(WindowConfig)
 			Font = Enum.Font.GothamBold,
 			TextWrapped = false,
 			Text = '',
-			TextXAlignment = Enum.TextXAlignment.Center,
+			TextXAlignment = Enum.TextXAlignment.Left,
 			TextSize = 14,
 			ClearTextOnFocus = WindowConfig.SearchBar.ClearTextOnFocus or true
 		})
@@ -659,10 +651,10 @@ function TohruLib:MakeWindow(WindowConfig)
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
 
 		-- empurra TabHolder para baixo da barra de busca
---		local totalOffset = 50 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
---		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
---		TabHolder.Size     = UDim2.new(0, 0, 0, -(totalOffset + 10))
---	end
+		local totalOffset = 50 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
+		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
+		TabHolder.Size     = UDim2.new(1, 0, 1, -(totalOffset + 10))
+	end
 
 
 
@@ -1792,37 +1784,14 @@ function TohruLib:MakeWindow(WindowConfig)
 		return ElementFunction   
 	end  
 	
-	local version = "V1.6"
-	local isStable = false  -- coloque `true` para versões estáveis
-
-	-- Carrega a biblioteca
-	print("Loading Tohru Library...")
-
-	-- Se for estável, apenas mostra a versão
-	if isStable then
-		print(version)
-	else
-		-- Se for instável, printa aviso e mostra notificação
-		print("⚠️ Versão instável: " .. version)
-		TohruLib:MakeNotification({
-			Name    = "Tohru Library",
-			Content = "This version is unstable",
-			Image   = "alert-triangle",
-			Time    = 5,
-		})
-	end
-
-	warn("Finished")
-
 	TohruLib:MakeNotification({
-		Name    = "Tohru Library",
-		Content = "By Azurion :3",
-		Image   = "heart",
-		Time    = 5,
+		Name = "UI Library Upgrade",
+		Content = "New UI Library Available at sirius.menu/discord and sirius.menu/rayfield",
+		Time = 5
 	})
 	
 
-	end
+	
 	return TabFunction
 end   
 
