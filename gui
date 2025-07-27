@@ -653,7 +653,7 @@ function TohruLib:MakeWindow(WindowConfig)
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
 
 		-- empurra TabHolder para baixo da barra de busca
-		local totalOffset = 20 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
+		local totalOffset = 10 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
 		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
 		TabHolder.Size     = UDim2.new(1, 0, 1, -(totalOffset + 10))
 	end
