@@ -608,15 +608,22 @@ function TohruLib:MakeWindow(WindowConfig)
 	    -- after: local Tabs = {};
 	if WindowConfig.SearchBar then
 		-- cria e estiliza
+
+		local SEARCH_HEIGHT    = 24
+		local TOPBAR_HEIGHT    = 50
+		local V_PADDING        = 12    -- distância do topbar até a barra
+		local H_PADDING        = 16    -- distância lateral das bordas
+
+
 		local SB = Create("TextBox", {
-		Size                = UDim2.new(1, -24, 0, 24),
-		Position            = UDim2.new(0, 12, 0, 50 + 8),    -- começa 50px do topo + 8px de padding
-		BackgroundTransparency = 1,
+		Size                = UDim2.new(1, -2 * H_PADDING, 0, SEARCH_HEIGHT),
+		Position            = UDim2.new(0, H_PADDING, 0, TOPBAR_HEIGHT + V_PADDING),
+ 		BackgroundTransparency = 1,
 		PlaceholderText     = WindowConfig.SearchBar.Default or "Search",
 		ClearTextOnFocus    = WindowConfig.SearchBar.ClearTextOnFocus or true,
 		Font                = Enum.Font.GothamBold,
 		TextSize            = 14,
-		TextXAlignment      = Enum.TextXAlignment.Left,
+		TextXAlignment      = Enum.TextXAlignment.Left,	
 		Parent              = MainWindow,                    -- ou WindowStuff, conforme seu layout
 		})
 		local SB_Txt = AddThemeObject(SB, "Text")
