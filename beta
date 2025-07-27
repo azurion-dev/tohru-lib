@@ -610,7 +610,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	if WindowConfig.SearchBar then
 		-- Cria o TextBox (escala cheia, mas dentro de um RoundFrame menor)
 		local SearchBox = Create("TextBox", {
-			Size                = UDim2.new(1, 0, 1, 0),
+			Size                = UDim2.new(0.3, 0, 1, 0),
 			BackgroundTransparency = 1,
 			TextColor3          = Color3.fromRGB(255, 255, 255),
 			PlaceholderColor3   = Color3.fromRGB(210,210,210),
