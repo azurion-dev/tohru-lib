@@ -591,7 +591,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	}), "Second")
 
 
-	local Tabs = {};
+	local Tabs = {}
 
 	    -- after: local Tabs = {};
     if WindowConfig.SearchBar then
@@ -799,8 +799,11 @@ function TohruLib:MakeWindow(WindowConfig)
 			}), "Text")
 		})
 
+		  Tabs[TabConfig.Name] = TabFrame
+
 		if GetIcon(TabConfig.Icon) ~= nil then
 			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
+			    
 		end	
 
 		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
