@@ -17,6 +17,7 @@ Esta biblioteca ("Tohru Lib") é de autoria original de **Azurion** e protegida 
 
 - ❌ É **proibido** copiar, clonar, modificar ou redistribuir este código.
 - ❌ É **proibido** recriar ou refazer funcionalidades derivadas da **Tohru Lib** sem autorização do autor.
+> Não eu não sou aquele que vai falar assim, HAN VC TEM A FUNÇAO DE SEARCH BOX não e Saramago eu so vou tentar remover do ar se for mt similar a ponto de pre-copia
 
 ---
 
@@ -45,9 +46,7 @@ Esta biblioteca ("Tohru Lib") é de autoria original de **Azurion** e protegida 
 
 Para dúvidas, colaborações ou solicitações de uso especial, entre em contato:
 
-**Discord:** `@Azurion#XXXX`  
-**Email:** `seuemail@exemplo.com` *(preencha aqui)*
-
+**Discord:** `azurion_under`
 ---
 
 > Esta licença foi escrita para proteger a originalidade e integridade da Tohru Lib.
