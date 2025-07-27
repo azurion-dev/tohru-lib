@@ -1,5 +1,5 @@
 --[[
-  Made by azurion_under
+  Made by azurion_under (TLL LICENSE)
 --]]
 
 local UserInputService = game:GetService("UserInputService")
@@ -1819,12 +1819,15 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	warn("Finished")
 
-	TohruLib:MakeNotification({
-		Name    = "Tohru Library",
-		Content = "By Azurion :3",
-		Image   = "rbxassetid://4483345998",
-		Time    = 5,
-	})
+warn("⚠️ Aviso: Esta biblioteca é de propriedade de Azurion e protegida pela Tohru Lib License (TLL). Uso não autorizado é proibido.")
+
+TohruLib:MakeNotification({
+	Name    = "TLL - License Notice",
+	Content = "Using this library means you accept the TLL license.\nOwner: Azurion",
+	Image   = "alert-triangle",
+	Time    = 5,
+})
+
 	
 
 	
