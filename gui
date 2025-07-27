@@ -1,6 +1,6 @@
 --[[
 	Tohru Lib © 2025 Azurion - Licenciada sob TLL (ver LICENSE.md)
-]]
+--]]
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
