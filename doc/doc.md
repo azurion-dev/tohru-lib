@@ -10,7 +10,16 @@ local TohruLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/azu
 
 ## Creating a Window
 ```lua
-local Window = TohruLib:MakeWindow({Name = "Tohru Lib", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Window = TohruLib:MakeWindow({
+	Name = "Tohru Hub | Script Hub V0.4",
+	HidePremium = false,
+	SaveConfig = false,
+	ConfigFolder = "TohruHub",
+	SearchBar = {
+		Default = "🔍 Search",
+		ClearTextOnFocus = false,
+	}
+})
 
 --[[
 Name = <string> - The name of the UI.
