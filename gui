@@ -738,19 +738,9 @@ function TohruLib:MakeWindow(WindowConfig)
 			UIHidden = not UIHidden
 			MainWindow.Visible = not UIHidden
 
-			local isMobile = UserInputService.TouchEnabled
-
-			local hiddenText = isMobile
-				and "Tap the anime button to reopen the interface"
-				or "Press Right Control to reopen the interface"
-
-			local shownText = isMobile
-				and "Tap the anime button to hide the interface"
-				or "Press Right Control to hide the interface"
-
 			TohruLib:MakeNotification({
 				Name = UIHidden and "🔒 Interface Hidden" or "🔓 Interface Open",
-				Content = UIHidden and hiddenText or shownText,
+				Content = UIHidden and "Tap Right Control to reopen the interface" or "Tap Right Control to hide the interface",
 				Time = 5
 			})
 		end
@@ -1806,12 +1796,8 @@ function TohruLib:MakeWindow(WindowConfig)
 		end
 		return ElementFunction   
 	end  
-	
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 
-	if not UserInputService.TouchEnabled then
+		if not UserInputService.TouchEnabled then
 		return -- se não for mobile, não cria nada
 	end
 
@@ -1845,7 +1831,6 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 		wait(0.1)
 		VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.RightControl, false, game)
 	end)
-
 
 
 	local version = "V1.6"
