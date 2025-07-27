@@ -608,53 +608,51 @@ function TohruLib:MakeWindow(WindowConfig)
 	    -- after: local Tabs = {};
 			-- after: local Tabs = {};
 	if WindowConfig.SearchBar then
-		-- Cria o TextBox (escala cheia, mas dentro de um RoundFrame menor)
+		-- Cria o TextBox (preenche quase tudo dentro do RoundFrame)
 		local SearchBox = Create("TextBox", {
-			Size                = UDim2.new(1, -10, 1, 0),
-			Position = UDim2.new(0, 5, 0, 0), -- margem interna
+			Size = UDim2.new(1, -12, 1, 0),           -- margem interna lateral de 6px cada lado
+			Position = UDim2.new(0, 6, 0, 0),         -- centraliza dentro do RoundFrame
 			BackgroundTransparency = 1,
-			TextColor3          = Color3.fromRGB(255, 255, 255),
-			PlaceholderColor3   = Color3.fromRGB(210,210,210),
-			PlaceholderText     = WindowConfig.SearchBar.Default or "Search",
-			Font                = Enum.Font.GothamBold,
-			TextWrapped         = true,
-			Text                = '',
-			TextXAlignment      = Enum.TextXAlignment.Center,
-			TextSize            = 14,
-			ClearTextOnFocus    = WindowConfig.SearchBar.ClearTextOnFocus or true
+			TextColor3 = Color3.fromRGB(255, 255, 255),
+			PlaceholderColor3 = Color3.fromRGB(210, 210, 210),
+			PlaceholderText = WindowConfig.SearchBar.Default or "Search",
+			Font = Enum.Font.GothamBold,
+			TextWrapped = false,
+			Text = '',
+			TextXAlignment = Enum.TextXAlignment.Left,
+			TextSize = 14,
+			ClearTextOnFocus = WindowConfig.SearchBar.ClearTextOnFocus or true
 		})
 		local TextboxActual = AddThemeObject(SearchBox, "Text")
 
 		-- contêiner arredondado
 		local SearchBar = AddThemeObject(
-		SetChildren(
-			SetProps(MakeElement("RoundFrame", Color3.fromRGB(255,255,255), 1, 6), {
-			Parent      = WindowStuff,
-			Size        = UDim2.new(0, 130, 0, 24),
-			Position    = UDim2.new(1, -16, 0, 58),  -- 1 = direita total, -16 = 16px margem
-			AnchorPoint = Vector2.new(1, 0)
+			SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255,255,255), 1, 6), {
+				Parent = WindowStuff,
+				Size = UDim2.new(0, 160, 0, 24),        -- AUMENTEI de 130 → 160 para caber mais texto
+				Position = UDim2.new(1, -16, 0, 58),    -- alinha na direita com 16px de margem
+				AnchorPoint = Vector2.new(1, 0)
+			}), {
+				AddThemeObject(MakeElement("Stroke"), "Stroke"),
+				TextboxActual
 			}),
-			{
-			AddThemeObject(MakeElement("Stroke"), "Stroke"),
-			TextboxActual
-			}
-		),
-		"Main")
+			"Main"
+		)
 
-		-- filtro
-    local function SearchHandle()
-      local txt = string.lower(SearchBox.Text)
-      for name, btn in pairs(Tabs) do
-        if btn:IsA("TextButton") then
-          btn.Visible = string.find(string.lower(name), txt, 1, true) and true or false
-        end
-      end
-    end
-	
+		-- função de busca
+		local function SearchHandle()
+			local txt = string.lower(SearchBox.Text)
+			for name, btn in pairs(Tabs) do
+				if btn:IsA("TextButton") then
+					btn.Visible = string.find(string.lower(name), txt, 1, true) and true or false
+				end
+			end
+		end
+
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
 
-		-- Ajuste do TabHolder (empurra tudo para baixo)
-		local totalOffset = 50 + 16 + 24 + 8  -- topbar + padding + barra + espaçamento extra
+		-- empurra TabHolder para baixo da barra de busca
+		local totalOffset = 50 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
 		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
 		TabHolder.Size     = UDim2.new(1, 0, 1, -(totalOffset + 10))
 	end
