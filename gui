@@ -1,5 +1,5 @@
 --[[
-  Made by azurion_under (TLL License)
+  Made by azurion_under
 --]]
 
 local UserInputService = game:GetService("UserInputService")
@@ -498,6 +498,8 @@ function TohruLib:MakeWindow(WindowConfig)
 		end	
 	end
 
+	local searchOffset = WindowConfig.SearchBar and 24 + 8 or 0  -- 24px de altura da barra + 8px de padding
+
 	local TabHolder = AddThemeObject(
 		SetChildren(
 		SetProps(
@@ -651,6 +653,8 @@ function TohruLib:MakeWindow(WindowConfig)
 		end
 
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
+
+
 
 
 	local WindowName = AddThemeObject(SetProps(MakeElement("Label", WindowConfig.Name, 14), {
@@ -1868,7 +1872,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	})
 	
 
-	end
+	
 	return TabFunction
 end   
 
