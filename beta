@@ -610,8 +610,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	if WindowConfig.SearchBar then
 		-- Cria o TextBox (preenche quase tudo dentro do RoundFrame)
 		local SearchBox = Create("TextBox", {
-			Size = UDim2.new(1, -12, 1, 0),           -- margem interna lateral de 6px cada lado
-			Position = UDim2.new(0, 6, 0, 0),         -- centraliza dentro do RoundFrame
+			Size = UDim2.new(1, 0, 1, 0),           -- margem interna lateral de 6px cada lado
 			BackgroundTransparency = 1,
 			TextColor3 = Color3.fromRGB(255, 255, 255),
 			PlaceholderColor3 = Color3.fromRGB(210, 210, 210),
@@ -629,9 +628,9 @@ function TohruLib:MakeWindow(WindowConfig)
 		local SearchBar = AddThemeObject(
 			SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255,255,255), 1, 6), {
 				Parent = WindowStuff,
-				Size = UDim2.new(0, 58, 0, 24),        -- AUMENTEI de 130 → 160 para caber mais texto
-				Position = UDim2.new(1, -10, 0, 58),    -- alinha na direita com 16px de margem
-				AnchorPoint = Vector2.new(1, 0)
+				Size = UDim2.new(0, 130, 0, 24),
+				Position = UDim2.new(1.013, -12, 0.075, 0),
+				AnchorPoint = Vector2.new(1, 0.5)
 			}), {
 				AddThemeObject(MakeElement("Stroke"), "Stroke"),
 				TextboxActual
