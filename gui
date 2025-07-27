@@ -1,4 +1,6 @@
-
+--]]
+	Rewrite by Azurion_under
+--]]
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -27,11 +29,11 @@ local TohruLib = {
 	SaveCfg = false
 }
 
---Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
+--Feather Icons https://raw.githubusercontent.com/frappedevs/lucideblox/refs/heads/master/src/modules/util/icons.json - Created by 7kayoh
 local Icons = {}
 
 local Success, Response = pcall(function()
-	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/evoincorp/lucideblox/master/src/modules/util/icons.json")).icons
+	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/frappedevs/lucideblox/refs/heads/master/src/modules/util/icons.json")).icons
 end)
 
 if not Success then
@@ -482,8 +484,8 @@ function TohruLib:MakeWindow(WindowConfig)
 	WindowConfig.IntroText = WindowConfig.IntroText or "Tohru Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
-	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
-	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
+	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://122700469170163"
+	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://122700469170163"
 	WindowConfig.SearchBar = WindowConfig.SearchBar or nil
 	TohruLib.Folder = WindowConfig.ConfigFolder
 	TohruLib.SaveCfg = WindowConfig.SaveConfig
@@ -501,8 +503,8 @@ function TohruLib:MakeWindow(WindowConfig)
 		SetProps(
 			MakeElement("ScrollFrame", Color3.fromRGB(255,255,255), 4),
 			{
-			Size     = UDim2.new(1, 0, 1, -(50 + searchOffset)),   -- 50px de topo da janela + offset da SearchBar
-			Position = UDim2.new(0, 0, 0, 50 + searchOffset)
+			Size = UDim2.new(1, 0, 1, -90),
+			Position = UDim2.new(0, 0, 0, 40)
 			}
 		),
 		{
@@ -618,7 +620,7 @@ function TohruLib:MakeWindow(WindowConfig)
 			Font = Enum.Font.GothamBold,
 			TextWrapped = false,
 			Text = '',
-			TextXAlignment = Enum.TextXAlignment.Left,
+			TextXAlignment = Enum.TextXAlignment.Center,
 			TextSize = 14,
 			ClearTextOnFocus = WindowConfig.SearchBar.ClearTextOnFocus or true
 		})
@@ -720,19 +722,30 @@ function TohruLib:MakeWindow(WindowConfig)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
+
 		TohruLib:MakeNotification({
-			Name = "Interface Hidden",
-			Content = "Tap RightShift to reopen the interface",
+			Name = "🔒 Interface Hidden",
+			Content = "Tap Right Control to reopen the interface",
 			Time = 5
 		})
+
 		WindowConfig.CloseCallback()
 	end)
 
-	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
-			MainWindow.Visible = true
+	AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
+		if GameProcessed then return end
+		if Input.KeyCode == Enum.KeyCode.RightControl then
+			UIHidden = not UIHidden
+			MainWindow.Visible = not UIHidden
+
+			TohruLib:MakeNotification({
+				Name = UIHidden and "🔒 Interface Hidden" or "🔓 Interface Open",
+				Content = UIHidden and "Tap Right Control to reopen the interface" or "Tap Right Control to hide the interface",
+				Time = 5
+			})
 		end
 	end)
+
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
 		if Minimized then
@@ -1784,10 +1797,33 @@ function TohruLib:MakeWindow(WindowConfig)
 		return ElementFunction   
 	end  
 	
+	local version = "V1.6"
+	local isStable = false  -- coloque `true` para versões estáveis
+
+	-- Carrega a biblioteca
+	print("Loading Tohru Library...")
+
+	-- Se for estável, apenas mostra a versão
+	if isStable then
+		print(version)
+	else
+		-- Se for instável, printa aviso e mostra notificação
+		print("⚠️ Versão instável: " .. version)
+		TohruLib:MakeNotification({
+			Name    = "Tohru Library",
+			Content = "This version is unstable",
+			Image   = "alert-triangle",
+			Time    = 5,
+		})
+	end
+
+	warn("Finished")
+
 	TohruLib:MakeNotification({
-		Name = "UI Library Upgrade",
-		Content = "New UI Library Available at sirius.menu/discord and sirius.menu/rayfield",
-		Time = 5
+		Name    = "Tohru Library",
+		Content = "By Azurion :3",
+		Image   = "rbxassetid://4483345998",
+		Time    = 5,
 	})
 	
 
