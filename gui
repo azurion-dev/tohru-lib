@@ -1,6 +1,6 @@
 --[[
 	Tohru Lib © 2025 Azurion - Licenciada sob TLL (ver LICENSE.md)
---]]
+]]
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -39,7 +39,7 @@ local TohruLib = {
 local Icons = {}
 
 local Success, Response = pcall(function()
-	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/frappedevs/lucideblox/refs/heads/master/src/modules/util/icons.json")).icons
+	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/azurion-dev/tohru-lib/refs/heads/main/feather.json")).icons
 end)
 
 if not Success then
@@ -627,7 +627,6 @@ function TohruLib:MakeWindow(WindowConfig)
 			TextWrapped = false,
 			Text = '',
 			TextXAlignment = Enum.TextXAlignment.Center,
-			TextYAlignment = Enum.TextYAlignment.Center
 			TextSize = 14,
 			ClearTextOnFocus = WindowConfig.SearchBar.ClearTextOnFocus or true
 		})
@@ -1823,7 +1822,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	})
 	
 
-	
+	end
 	return TabFunction
 end   
 
