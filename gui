@@ -1,11 +1,13 @@
 --[[
-  Made by azurion_under (TLL LICENSE)
+  Made by azurion_under (TLL License)
 --]]
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
@@ -496,8 +498,6 @@ function TohruLib:MakeWindow(WindowConfig)
 		end	
 	end
 
-	local searchOffset = WindowConfig.SearchBar and 24 + 8 or 0  -- 24px de altura da barra + 8px de padding
-
 	local TabHolder = AddThemeObject(
 		SetChildren(
 		SetProps(
@@ -652,13 +652,6 @@ function TohruLib:MakeWindow(WindowConfig)
 
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
 
-		-- empurra TabHolder para baixo da barra de busca
-		local totalOffset = 50 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
-		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
-		TabHolder.Size     = UDim2.new(1, 0, 1, -(totalOffset + 10))
-	end
-
-
 
 	local WindowName = AddThemeObject(SetProps(MakeElement("Label", WindowConfig.Name, 14), {
 		Size = UDim2.new(1, -30, 2, 0),
@@ -738,9 +731,18 @@ function TohruLib:MakeWindow(WindowConfig)
 			UIHidden = not UIHidden
 			MainWindow.Visible = not UIHidden
 
+			local isMobile = UserInputService.TouchEnabled
+
+			local hiddenText = isMobile and "Tap the button with the anime image to reopen the interface"
+				or "Press Right Control to reopen the interface"
+
+			local showText = isMobile and "Tap the button with the anime image to hide the interface"
+				or "Press Right Control to hide the interface"
+
 			TohruLib:MakeNotification({
 				Name = UIHidden and "🔒 Interface Hidden" or "🔓 Interface Open",
-				Content = UIHidden and "Tap Right Control to reopen the interface" or "Tap Right Control to hide the interface",
+				Content = UIHidden and hiddenText or showText,
+				Image = "rbxassetid://122700469170163",
 				Time = 5
 			})
 		end
@@ -1797,6 +1799,45 @@ function TohruLib:MakeWindow(WindowConfig)
 		return ElementFunction   
 	end  
 	
+
+
+	if not UserInputService.TouchEnabled then
+		return -- se não for mobile, não cria nada
+	end
+
+	local player = Players.LocalPlayer
+
+-- Criar GUI
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "MobileRCBtn"
+	gui.ResetOnSpawn = false
+	gui.IgnoreGuiInset = true
+	gui.Parent = player:WaitForChild("PlayerGui")
+
+	-- Criar botão circular
+	local button = Instance.new("ImageButton")
+	button.Size = UDim2.new(0, 45, 0, 45)
+	button.Position = UDim2.new(0, 10, 0, 50) -- canto superior esquerdo abaixo do menu
+	button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	button.BorderSizePixel = 0
+	button.Image = "rbxassetid://122700469170163"
+	button.Name = "RCBtn"
+	button.Parent = gui
+
+	-- Arredondar
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = button
+
+	-- Ao clicar: simula RightControl
+	button.MouseButton1Click:Connect(function()
+		VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.RightControl, false, game)
+		wait(0.1)
+		VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.RightControl, false, game)
+	end)
+
+
+
 	local version = "V1.6"
 	local isStable = false  -- coloque `true` para versões estáveis
 
@@ -1819,15 +1860,12 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	warn("Finished")
 
-warn("⚠️ Aviso: Esta biblioteca é de propriedade de Azurion e protegida pela Tohru Lib License (TLL). Uso não autorizado é proibido.")
-
-TohruLib:MakeNotification({
-	Name    = "TLL - License Notice",
-	Content = "Using this library means you accept the TLL license.\nOwner: Azurion",
-	Image   = "alert-triangle",
-	Time    = 5,
-})
-
+	TohruLib:MakeNotification({
+		Name    = "Tohru Library",
+		Content = "By Azurion :3",
+		Image   = "rbxassetid://4483345998",
+		Time    = 5,
+	})
 	
 
 	
