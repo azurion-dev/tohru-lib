@@ -654,6 +654,11 @@ function TohruLib:MakeWindow(WindowConfig)
 
 		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
 
+		-- empurra TabHolder para baixo da barra de busca
+		local totalOffset = 50 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
+		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
+		TabHolder.Size     = UDim2.new(1, 0, 1, -(totalOffset + 10))
+	end
 
 
 
@@ -746,7 +751,6 @@ function TohruLib:MakeWindow(WindowConfig)
 			TohruLib:MakeNotification({
 				Name = UIHidden and "🔒 Interface Hidden" or "🔓 Interface Open",
 				Content = UIHidden and hiddenText or showText,
-				Image = "rbxassetid://122700469170163",
 				Time = 5
 			})
 		end
@@ -1872,7 +1876,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	})
 	
 
-	end
+	
 	return TabFunction
 end   
 
