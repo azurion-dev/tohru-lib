@@ -1,6 +1,7 @@
 --[[
-	--@ azurion_under: rewrite.
---]]
+	Tohru Lib © 2025 Azurion - Licenciada sob TLL (ver LICENSE.md)
+]]
+
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -19,7 +20,6 @@ local TohruLib = {
 	ThemeObjects = {},
 	Connections = {},
 	Flags = {},
-	FavoriteEvent = Instance.new("BindableEvent"),
 	Themes = {
 		Default = {
 			Main = Color3.fromRGB(25, 25, 25),
@@ -35,15 +35,16 @@ local TohruLib = {
 	SaveCfg = false
 }
 
+--Feather Icons https://github.com/evoincorp/lucideblox/tree/master/src/modules/util - Created by 7kayoh
 local Icons = {}
 
 local Success, Response = pcall(function()
-	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/frappedevs/lucideblox/refs/heads/master/src/modules/util/icons.json")).icons
+	Icons = HttpService:JSONDecode(game:HttpGetAsync("https://raw.githubusercontent.com/azurion-dev/tohru-lib/refs/heads/main/feather.json")).icons
 end)
 
 if not Success then
 	warn("\nTohru Library - Failed to load Feather Icons. Error code: " .. Response .. "\n")
-end
+end	
 
 local function GetIcon(IconName)
 	if Icons[IconName] ~= nil then
@@ -55,16 +56,34 @@ end
 
 local Tohru = Instance.new("ScreenGui")
 Tohru.Name = "Tohru"
-Tohru.Parent = PARENT
+if syn then
+	syn.protect_gui(Tohru)
+	Tohru.Parent = game.CoreGui
+else
+	Tohru.Parent = gethui() or game.CoreGui
+end
 
-for _, Interface in ipairs(PARENT:GetChildren()) do
-	if Interface.Name == Tohru.Name and Interface ~= Tohru then
-		Interface:Destroy()
+if gethui then
+	for _, Interface in ipairs(gethui():GetChildren()) do
+		if Interface.Name == Tohru.Name and Interface ~= Tohru then
+			Interface:Destroy()
+		end
+	end
+else
+	for _, Interface in ipairs(game.CoreGui:GetChildren()) do
+		if Interface.Name == Tohru.Name and Interface ~= Tohru then
+			Interface:Destroy()
+		end
 	end
 end
 
 function TohruLib:IsRunning()
-	return Tohru.Parent == PARENT
+	if gethui then
+		return Tohru.Parent == gethui()
+	else
+		return Tohru.Parent == game:GetService("CoreGui")
+	end
+
 end
 
 local function AddConnection(Signal, Function)
@@ -86,35 +105,35 @@ task.spawn(function()
 	end
 end)
 
-local function MakeDraggable(DragPoint, Main)
+local function AddDraggingFunctionality(DragPoint, Main)
+	pcall(function()
+		local Dragging, DragInput, MousePos, FramePos = false
+		DragPoint.InputBegan:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+				Dragging = true
+				MousePos = Input.Position
+				FramePos = Main.Position
 
-	local Dragging, DragInput, MousePos, FramePos = false
-	AddConnection(DragPoint.InputBegan, function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-			Dragging = true
-			MousePos = Input.Position
-			FramePos = Main.Position
-
-			Input.Changed:Connect(function()
-				if Input.UserInputState == Enum.UserInputState.End then
-					Dragging = false
-				end
-			end)
-		end
+				Input.Changed:Connect(function()
+					if Input.UserInputState == Enum.UserInputState.End then
+						Dragging = false
+					end
+				end)
+			end
+		end)
+		DragPoint.InputChanged:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseMovement then
+				DragInput = Input
+			end
+		end)
+		UserInputService.InputChanged:Connect(function(Input)
+			if Input == DragInput and Dragging then
+				local Delta = Input.Position - MousePos
+				TweenService:Create(Main, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)}):Play()
+			end
+		end)
 	end)
-	AddConnection(DragPoint.InputChanged, function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement then
-			DragInput = Input
-		end
-	end)
-	AddConnection(UserInputService.InputChanged, function(Input)
-		if Input == DragInput and Dragging then
-			local Delta = Input.Position - MousePos
-			Main.Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
-		end
-	end)
-
-end    
+end   
 
 local function Create(Name, Properties, Children)
 	local Object = Instance.new(Name)
@@ -133,19 +152,6 @@ local function CreateElement(ElementName, ElementFunction)
 	end
 end
 
-local function AddItemTable(Table, Item, Value)
-	local Item = tostring(Item)
-	local Count = 1
-
-	while Table[Item] do
-		Count = Count + 1
-		Item = string.format('%s-%d', Item, Count)
-	end
-
-	Table[Item] = Value
-end
-
-
 local function MakeElement(ElementName, ...)
 	local NewElement = TohruLib.Elements[ElementName](...)
 	return NewElement
@@ -158,13 +164,7 @@ local function SetProps(Element, Props)
 	return Element
 end
 
-local Total = {
-	SetChildren = 0;
-	AddThemeObject = 0;
-};
-
 local function SetChildren(Element, Children)
-	Total.SetChildren += 1;
 	table.foreach(Children, function(_, Child)
 		Child.Parent = Element
 	end)
@@ -199,8 +199,6 @@ local function AddThemeObject(Object, Type)
 	if not TohruLib.ThemeObjects[Type] then
 		TohruLib.ThemeObjects[Type] = {}
 	end    
-	Total.AddThemeObject += 1;
-
 	table.insert(TohruLib.ThemeObjects[Type], Object)
 	Object[ReturnProperty(Object)] = TohruLib.Themes[TohruLib.SelectedTheme][Type]
 	return Object
@@ -250,10 +248,7 @@ local function SaveCfg(Name)
 			end
 		end	
 	end
-
-	if writefile then
-		writefile(TohruLib.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
-	end
+	writefile(TohruLib.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
 end
 
 local WhitelistedMouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3}
@@ -404,7 +399,7 @@ function TohruLib:MakeNotification(NotificationConfig)
 	spawn(function()
 		NotificationConfig.Name = NotificationConfig.Name or "Notification"
 		NotificationConfig.Content = NotificationConfig.Content or "Test"
-		NotificationConfig.Image = NotificationConfig.Image or "rbxassetid://122700469170163"
+		NotificationConfig.Image = NotificationConfig.Image or "rbxassetid://4384403532"
 		NotificationConfig.Time = NotificationConfig.Time or 15
 
 		local NotificationParent = SetProps(MakeElement("TFrame"), {
@@ -438,7 +433,6 @@ function TohruLib:MakeNotification(NotificationConfig)
 				Position = UDim2.new(0, 0, 0, 25),
 				Font = Enum.Font.GothamSemibold,
 				Name = "Content",
-				RichText = true,
 				AutomaticSize = Enum.AutomaticSize.Y,
 				TextColor3 = Color3.fromRGB(200, 200, 200),
 				TextWrapped = true
@@ -463,7 +457,7 @@ function TohruLib:MakeNotification(NotificationConfig)
 end    
 
 function TohruLib:Init()
-	if TohruLib.SaveCfg and (isfile and readfile) then	
+	if TohruLib.SaveCfg then	
 		pcall(function()
 			if isfile(TohruLib.Folder .. "/" .. game.GameId .. ".txt") then
 				LoadCfg(readfile(TohruLib.Folder .. "/" .. game.GameId .. ".txt"))
@@ -477,6 +471,8 @@ function TohruLib:Init()
 	end	
 end	
 
+
+
 function TohruLib:MakeWindow(WindowConfig)
 	local FirstTab = true
 	local Minimized = false
@@ -487,37 +483,43 @@ function TohruLib:MakeWindow(WindowConfig)
 	WindowConfig.Name = WindowConfig.Name or "Tohru Library"
 	WindowConfig.ConfigFolder = WindowConfig.ConfigFolder or WindowConfig.Name
 	WindowConfig.SaveConfig = WindowConfig.SaveConfig or false
-
+	WindowConfig.HidePremium = WindowConfig.HidePremium or false
 	if WindowConfig.IntroEnabled == nil then
 		WindowConfig.IntroEnabled = true
 	end
-
 	WindowConfig.IntroText = WindowConfig.IntroText or "Tohru Library"
 	WindowConfig.CloseCallback = WindowConfig.CloseCallback or function() end
 	WindowConfig.ShowIcon = WindowConfig.ShowIcon or false
-	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://122700469170163"
-	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://122700469170163"
+	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
+	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
 	WindowConfig.SearchBar = WindowConfig.SearchBar or nil
 	TohruLib.Folder = WindowConfig.ConfigFolder
 	TohruLib.SaveCfg = WindowConfig.SaveConfig
 
 	if WindowConfig.SaveConfig then
-		if (isfolder and makefolder) and not isfolder(WindowConfig.ConfigFolder) then
+		if not isfolder(WindowConfig.ConfigFolder) then
 			makefolder(WindowConfig.ConfigFolder)
 		end	
 	end
 
-	local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4),
-		WindowConfig.SearchBar and {
+	local searchOffset = WindowConfig.SearchBar and 24 + 8 or 0  -- 24px de altura da barra + 8px de padding
+
+	local TabHolder = AddThemeObject(
+		SetChildren(
+		SetProps(
+			MakeElement("ScrollFrame", Color3.fromRGB(255,255,255), 4),
+			{
 			Size = UDim2.new(1, 0, 1, -90),
 			Position = UDim2.new(0, 0, 0, 40)
-		} or {
-			Size = UDim2.new(1, 0, 1, -50)
-		}),
+			}
+		),
 		{
 			MakeElement("List"),
 			MakeElement("Padding", 8, 0, 0, 8)
-		}), "Divider")
+		}
+		),
+	"Divider"
+	)
 
 	AddConnection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 		TabHolder.CanvasSize = UDim2.new(0, 0, 0, TabHolder.UIListLayout.AbsoluteContentSize.Y + 16)
@@ -594,60 +596,76 @@ function TohruLib:MakeWindow(WindowConfig)
 				AddThemeObject(MakeElement("Stroke"), "Stroke"),
 				MakeElement("Corner", 1)
 			}),
-			AddThemeObject(SetProps(MakeElement("Label", LocalPlayer.DisplayName, 13), {
+			AddThemeObject(SetProps(MakeElement("Label", LocalPlayer.DisplayName, WindowConfig.HidePremium and 14 or 13), {
 				Size = UDim2.new(1, -60, 0, 13),
-				Position = UDim2.new(0, 50, 0, 12),
+				Position = WindowConfig.HidePremium and UDim2.new(0, 50, 0, 19) or UDim2.new(0, 50, 0, 12),
 				Font = Enum.Font.GothamBold,
 				ClipsDescendants = true
 			}), "Text"),
+			AddThemeObject(SetProps(MakeElement("Label", "", 12), {
+				Size = UDim2.new(1, -60, 0, 12),
+				Position = UDim2.new(0, 50, 1, -25),
+				Visible = not WindowConfig.HidePremium
+			}), "TextDark")
 		}),
 	}), "Second")
 
-	local Tabs = {};
 
+	local Tabs = {}
+
+	    -- after: local Tabs = {};
+			-- after: local Tabs = {};
 	if WindowConfig.SearchBar then
+		-- Cria o TextBox (preenche quase tudo dentro do RoundFrame)
 		local SearchBox = Create("TextBox", {
-			Size = UDim2.new(1, 0, 1, 0),
+			Size = UDim2.new(1, 0, 1, 0),           -- margem interna lateral de 6px cada lado
 			BackgroundTransparency = 1,
 			TextColor3 = Color3.fromRGB(255, 255, 255),
-			PlaceholderColor3 = Color3.fromRGB(210,210,210),
+			PlaceholderColor3 = Color3.fromRGB(210, 210, 210),
 			PlaceholderText = WindowConfig.SearchBar.Default or "Search",
 			Font = Enum.Font.GothamBold,
-			TextWrapped = true,
+			TextWrapped = false,
 			Text = '',
 			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Center
 			TextSize = 14,
 			ClearTextOnFocus = WindowConfig.SearchBar.ClearTextOnFocus or true
 		})
-
 		local TextboxActual = AddThemeObject(SearchBox, "Text")
 
-		local SearchBar = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 1, 6), {
-			Parent = WindowStuff,
-			Size = UDim2.new(0, 130, 0, 24),
-			Position = UDim2.new(1.013, -12, 0.075, 0),
-			AnchorPoint = Vector2.new(1, 0.5)
-		}), {
-			AddThemeObject(MakeElement("Stroke"), "Stroke"),
-			TextboxActual
-		}), "Main")
+		-- contêiner arredondado
+		local SearchBar = AddThemeObject(
+			SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255,255,255), 1, 6), {
+				Parent = WindowStuff,
+				Size = UDim2.new(0, 130, 0, 24),
+				Position = UDim2.new(1.013, -12, 0.075, 0),
+				AnchorPoint = Vector2.new(1, 0.5)
+			}), {
+				AddThemeObject(MakeElement("Stroke"), "Stroke"),
+				TextboxActual
+			}),
+			"Main"
+		)
 
+		-- função de busca
 		local function SearchHandle()
-			local Text = string.lower(SearchBox.Text);
-
-			for i,v in pairs(Tabs) do
-				if v:IsA('TextButton') then
-					if string.find(string.lower(i), Text) then
-						v.Visible = true
-					else
-						v.Visible = false
-					end
+			local txt = string.lower(SearchBox.Text)
+			for name, btn in pairs(Tabs) do
+				if btn:IsA("TextButton") then
+					btn.Visible = string.find(string.lower(name), txt, 1, true) and true or false
 				end
 			end
 		end
 
-		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle);
-	end
+		AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), SearchHandle)
+
+		-- empurra TabHolder para baixo da barra de busca
+--		local totalOffset = 50 + 16 + 24 + 8 -- topbar + padding + barra + espaçamento extra
+--		TabHolder.Position = UDim2.new(0, 0, 0, totalOffset)
+--		TabHolder.Size     = UDim2.new(0, 0, 0, -(totalOffset + 10))
+--	end
+
+
 
 	local WindowName = AddThemeObject(SetProps(MakeElement("Label", WindowConfig.Name, 14), {
 		Size = UDim2.new(1, -30, 2, 0),
@@ -667,6 +685,13 @@ function TohruLib:MakeWindow(WindowConfig)
 		Size = UDim2.new(0, 615, 0, 344),
 		ClipsDescendants = true
 	}), {
+		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
+		--	AnchorPoint = Vector2.new(0.5, 0.5),
+		--	Position = UDim2.new(0.5, 0, 0.5, 0),
+		--	Size = UDim2.new(1, 80, 1, 320),
+		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
+		--	ImageTransparency = 0.7
+		--}),
 		SetChildren(SetProps(MakeElement("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
 			Name = "TopBar"
@@ -697,77 +722,24 @@ function TohruLib:MakeWindow(WindowConfig)
 			Position = UDim2.new(0, 25, 0, 15)
 		})
 		WindowIcon.Parent = MainWindow.TopBar
-	end
+	end	
 
-	MakeDraggable(DragPoint, MainWindow)
+	AddDraggingFunctionality(DragPoint, MainWindow)
 
-	local _currentKey = Enum.KeyCode.RightShift;
-	local isMobile = table.find({ Enum.Platform.IOS, Enum.Platform.Android }, UserInputService:GetPlatform());
-	local MobileIcon = SetChildren(SetProps(MakeElement("ImageButton", "http://www.roblox.com/asset/?id=5850308301"), {
-		Position = UDim2.new(0.25, 0, 0.1, 0);
-		Size = UDim2.new(0, 32, 0, 33);
-		-- Position = UDim2.new(0.52, 0, 0, 0);
-		-- Size = UDim2.new(0.045, 0, 0.089, 0);
-		-- Draggable = true;
-		Parent = Tohru;
-		Visible = false;
-	}), { MakeElement("Corner", 1, 0) });
-
--- Allow dragging of the mobile icon
-	MakeDraggable(MobileIcon, MobileIcon)
-
-	-- Tap mobile icon to show the UI
-	AddConnection(MobileIcon.MouseButton1Click, function()
-		MainWindow.Visible = true
-		UIHidden = false
-		MobileIcon.Visible = false
-
-		TohruLib:MakeNotification({
-			Name    = "🔓 Interface Shown",
-			Content = UserInputService.TouchEnabled
-				and "Tap the icon to hide the interface."
-				or ("Press <b>" .. _currentKey.Name .. "</b> to hide the interface."),
-			Time    = 5,
-		})
-	end)
-
-	-- Close button hides the UI (and shows mobile icon on touch)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
-
-		if UserInputService.TouchEnabled then
-			MobileIcon.Visible = true
-		end
-
 		TohruLib:MakeNotification({
-			Name    = "🔒 Interface Hidden",
-			Content = UserInputService.TouchEnabled
-				and "Tap the icon to open the interface again."
-				or ("Press <b>" .. _currentKey.Name .. "</b> to open the interface again."),
-			Time    = 5,
+			Name = "Interface Hidden",
+			Content = "Tap RightShift to reopen the interface",
+			Time = 5
 		})
 		WindowConfig.CloseCallback()
 	end)
 
-	-- Keyboard shortcut (e.g. RightControl) toggles the UI
-	AddConnection(UserInputService.InputBegan, function(input)
-		if input.KeyCode == _currentKey then
-			UIHidden = not MainWindow.Visible
-			MainWindow.Visible = not MainWindow.Visible
-			MobileIcon.Visible = false
-
-			TohruLib:MakeNotification({
-				Name    = UIHidden and "🔒 Interface Hidden" or "🔓 Interface Shown",
-				Content = UIHidden
-					and (UserInputService.TouchEnabled
-						and "Tap the icon to open the interface again."
-						or ("Press <b>" .. _currentKey.Name .. "</b> to open the interface again."))
-					or (UserInputService.TouchEnabled
-						and "Tap the icon to hide the interface."
-						or ("Press <b>" .. _currentKey.Name .. "</b> to hide the interface.")),
-				Time    = 5,
-			})
+	AddConnection(UserInputService.InputBegan, function(Input)
+		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
+			MainWindow.Visible = true
 		end
 	end)
 
@@ -826,14 +798,14 @@ function TohruLib:MakeWindow(WindowConfig)
 
 	if WindowConfig.IntroEnabled then
 		LoadSequence()
-	end
+	end	
 
-	local Functions = {}
-
-	function Functions:MakeTab(TabConfig)
+	local TabFunction = {}
+	function TabFunction:MakeTab(TabConfig)
 		TabConfig = TabConfig or {}
 		TabConfig.Name = TabConfig.Name or "Tab"
 		TabConfig.Icon = TabConfig.Icon or ""
+		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
 
 		local TabFrame = SetChildren(SetProps(MakeElement("Button"), {
 			Size = UDim2.new(1, 0, 0, 30),
@@ -855,10 +827,11 @@ function TohruLib:MakeWindow(WindowConfig)
 			}), "Text")
 		})
 
-		AddItemTable(Tabs, TabConfig.Name, TabFrame)
+		  Tabs[TabConfig.Name] = TabFrame
 
 		if GetIcon(TabConfig.Icon) ~= nil then
 			TabFrame.Ico.Image = GetIcon(TabConfig.Icon)
+			    
 		end	
 
 		local Container = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
@@ -905,27 +878,6 @@ function TohruLib:MakeWindow(WindowConfig)
 
 		local function GetElements(ItemParent)
 			local ElementFunction = {}
-
-			function ElementFunction:AddLog(Text)
-				local Label = MakeElement("Label", Text, 15)
-				local LogFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
-					Size = UDim2.new(1, 0, 1, 0),
-					BackgroundTransparency = 0.7,
-					Parent = ItemParent
-				}), {
-					AddThemeObject(SetProps(Label, {
-						Size = UDim2.new(1, -12, 1, 0),
-						Position = UDim2.new(0, 12, 0, 0),
-						TextXAlignment = Enum.TextXAlignment.Center,
-						TextSize = 19,
-						TextWrapped = true,
-						Font = Enum.Font.GothamBold,
-						Name = "Content"
-					}), "Text"),
-					AddThemeObject(MakeElement("Stroke"), "Stroke")
-				}), "Second")
-			end
-
 			function ElementFunction:AddLabel(Text)
 				local LabelFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 30),
@@ -947,7 +899,6 @@ function TohruLib:MakeWindow(WindowConfig)
 				end
 				return LabelFunction
 			end
-
 			function ElementFunction:AddParagraph(Text, Content)
 				Text = Text or "Text"
 				Content = Content or "Content"
@@ -985,33 +936,17 @@ function TohruLib:MakeWindow(WindowConfig)
 					ParagraphFrame.Content.Text = ToChange
 				end
 				return ParagraphFunction
-			end
-
+			end    
 			function ElementFunction:AddButton(ButtonConfig)
 				ButtonConfig = ButtonConfig or {}
 				ButtonConfig.Name = ButtonConfig.Name or "Button"
 				ButtonConfig.Callback = ButtonConfig.Callback or function() end
 				ButtonConfig.Icon = ButtonConfig.Icon or "rbxassetid://3944703587"
-				ButtonConfig.OriginalName = ButtonConfig.OriginalName or tostring(ButtonConfig.Name or "")
-
-				local Splitted = string.split(ButtonConfig.Name, " / ")
-				local Script = Splitted and Splitted[2]
-
-				if Script then
-					ButtonConfig.Name = Script
-					ButtonConfig.CanFavorite = true
-				end
 
 				local Button = {}
 
 				local Click = SetProps(MakeElement("Button"), {
 					Size = UDim2.new(1, 0, 1, 0)
-				})
-
-				local FavoriteButton = ButtonConfig.CanFavorite and SetProps(MakeElement("ImageButton", "http://www.roblox.com/asset/?id=109586771228631"), {
-					Size = UDim2.new(0, 20, 0, 20),
-					Position = UDim2.new(1, -55, 0, 7),
-					ZIndex = 25
 				})
 
 				local ButtonFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
@@ -1028,7 +963,6 @@ function TohruLib:MakeWindow(WindowConfig)
 						Size = UDim2.new(0, 20, 0, 20),
 						Position = UDim2.new(1, -30, 0, 7),
 					}), "TextDark"),
-					ButtonConfig.CanFavorite and AddThemeObject(FavoriteButton, "TextDark") or nil,
 					AddThemeObject(MakeElement("Stroke"), "Stroke"),
 					Click
 				}), "Second")
@@ -1052,18 +986,9 @@ function TohruLib:MakeWindow(WindowConfig)
 					TweenService:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(TohruLib.Themes[TohruLib.SelectedTheme].Second.R * 255 + 6, TohruLib.Themes[TohruLib.SelectedTheme].Second.G * 255 + 6, TohruLib.Themes[TohruLib.SelectedTheme].Second.B * 255 + 6)}):Play()
 				end)
 
-				--@ Favorite System
-				if FavoriteButton then
-					AddConnection(FavoriteButton.MouseButton1Down, function()
-						TohruLib.FavoriteEvent:Fire(ButtonConfig.OriginalName)
-					end)
-				end
-
 				function Button:Set(ButtonText)
 					ButtonFrame.Content.Text = ButtonText
-				end
-
-				Button.Instance = ButtonFrame
+				end	
 
 				return Button
 			end    
@@ -1463,7 +1388,7 @@ function TohruLib:MakeWindow(WindowConfig)
 							Holding = true
 							BindConfig.Callback(Holding)
 						else
-							BindConfig.Callback(Input)
+							BindConfig.Callback()
 						end
 					elseif Bind.Binding then
 						local Key
@@ -1828,54 +1753,79 @@ function TohruLib:MakeWindow(WindowConfig)
 			ElementFunction[i] = v 
 		end
 
-		return ElementFunction   
-	end
-
-	function Functions:ChangeKey(Keybind: Enum.KeyCode)
-		_currentKey = Keybind;
-	end;
-
-	function Functions:Destroy()
-		for _, Connection in next, TohruLib.Connections do
-			Connection:Disconnect()
+		if TabConfig.PremiumOnly then
+			for i, v in next, ElementFunction do
+				ElementFunction[i] = function() end
+			end    
+			Container:FindFirstChild("UIListLayout"):Destroy()
+			Container:FindFirstChild("UIPadding"):Destroy()
+			SetChildren(SetProps(MakeElement("TFrame"), {
+				Size = UDim2.new(1, 0, 1, 0),
+				Parent = ItemParent
+			}), {
+				AddThemeObject(SetProps(MakeElement("Image", "rbxassetid://3610239960"), {
+					Size = UDim2.new(0, 18, 0, 18),
+					Position = UDim2.new(0, 15, 0, 15),
+					ImageTransparency = 0.4
+				}), "Text"),
+				AddThemeObject(SetProps(MakeElement("Label", "Unauthorised Access", 14), {
+					Size = UDim2.new(1, -38, 0, 14),
+					Position = UDim2.new(0, 38, 0, 18),
+					TextTransparency = 0.4
+				}), "Text"),
+				AddThemeObject(SetProps(MakeElement("Image", "rbxassetid://4483345875"), {
+					Size = UDim2.new(0, 56, 0, 56),
+					Position = UDim2.new(0, 84, 0, 110),
+				}), "Text"),
+				AddThemeObject(SetProps(MakeElement("Label", "Premium Features", 14), {
+					Size = UDim2.new(1, -150, 0, 14),
+					Position = UDim2.new(0, 150, 0, 112),
+					Font = Enum.Font.GothamBold
+				}), "Text"),
+				AddThemeObject(SetProps(MakeElement("Label", "This part of the script is locked to Sirius Premium users. Purchase Premium in the Discord server (discord.gg/sirius)", 12), {
+					Size = UDim2.new(1, -200, 0, 14),
+					Position = UDim2.new(0, 150, 0, 138),
+					TextWrapped = true,
+					TextTransparency = 0.4
+				}), "Text")
+			})
 		end
-		MainWindow:Destroy()
-		MobileIcon:Destroy()
+		return ElementFunction   
+	end  
+	
+	local version = "V1.6"
+	local isStable = false  -- coloque `true` para versões estáveis
+
+	-- Carrega a biblioteca
+	print("Loading Tohru Library...")
+
+	-- Se for estável, apenas mostra a versão
+	if isStable then
+		print(version)
+	else
+		-- Se for instável, printa aviso e mostra notificação
+		print("⚠️ Versão instável: " .. version)
+		TohruLib:MakeNotification({
+			Name    = "Tohru Library",
+			Content = "This version is unstable",
+			Image   = "alert-triangle",
+			Time    = 5,
+		})
 	end
 
-	return Functions;
+	warn("Finished")
+
+	TohruLib:MakeNotification({
+		Name    = "Tohru Library",
+		Content = "By Azurion :3",
+		Image   = "heart",
+		Time    = 5,
+	})
+	
+
+	
+	return TabFunction
 end   
-
--- Define sua versão e se é estável ou não
-local version = "V1.6"
-local isStable = false  -- coloque `true` para versões estáveis
-
--- Carrega a biblioteca
-print("Loading Tohru Library...")
-
--- Se for estável, apenas mostra a versão
-if isStable then
-    print(version)
-else
-    -- Se for instável, printa aviso e mostra notificação
-    print("⚠️ Versão instável: " .. version)
-    TohruLib:MakeNotification({
-        Name    = "Tohru Library",
-        Content = "This version is unstable",
-        Image   = "alert-triangle",
-        Time    = 5,
-    })
-end
-
-warn("Finished")
-
-TohruLib:MakeNotification({
-    Name    = "Tohru Library",
-    Content = "By Azurion :3",
-    Image   = "rbxassetid://4483345998",
-    Time    = 5,
-})
-
 
 function TohruLib:Destroy()
 	Tohru:Destroy()
