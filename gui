@@ -1,5 +1,5 @@
---]]
-	Rewrite by Azurion_under
+--[[
+  Made by azurion_under
 --]]
 
 local UserInputService = game:GetService("UserInputService")
