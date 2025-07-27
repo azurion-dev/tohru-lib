@@ -1796,43 +1796,7 @@ function TohruLib:MakeWindow(WindowConfig)
 		end
 		return ElementFunction   
 	end  
-
-		if not UserInputService.TouchEnabled then
-		return -- se não for mobile, não cria nada
-	end
-
-	local player = Players.LocalPlayer
-
--- Criar GUI
-	local gui = Instance.new("ScreenGui")
-	gui.Name = "MobileRCBtn"
-	gui.ResetOnSpawn = false
-	gui.IgnoreGuiInset = true
-	gui.Parent = player:WaitForChild("PlayerGui")
-
-	-- Criar botão circular
-	local button = Instance.new("ImageButton")
-	button.Size = UDim2.new(0, 45, 0, 45)
-	button.Position = UDim2.new(0, 10, 0, 50) -- canto superior esquerdo abaixo do menu
-	button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	button.BorderSizePixel = 0
-	button.Image = "rbxassetid://122700469170163"
-	button.Name = "RCBtn"
-	button.Parent = gui
-
-	-- Arredondar
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(1, 0)
-	corner.Parent = button
-
-	-- Ao clicar: simula RightControl
-	button.MouseButton1Click:Connect(function()
-		VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.RightControl, false, game)
-		wait(0.1)
-		VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.RightControl, false, game)
-	end)
-
-
+	
 	local version = "V1.6"
 	local isStable = false  -- coloque `true` para versões estáveis
 
