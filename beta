@@ -629,8 +629,8 @@ function TohruLib:MakeWindow(WindowConfig)
 		SetChildren(
 			SetProps(MakeElement("RoundFrame", Color3.fromRGB(255,255,255), 1, 6), {
 			Parent      = WindowStuff,
-			Size        = UDim2.new(0, 24, 0, 24),
-			Position    = UDim2.new(1, -16, 0, 50 + 16),  -- 1 = direita total, -16 = 16px margem
+			Size        = UDim2.new(0, 15, 0, 15),
+			Position    = UDim2.new(1, -12, 0, 50 + 8),  -- 1 = direita total, -16 = 16px margem
 			AnchorPoint = Vector2.new(1, 0)
 			}),
 			{
