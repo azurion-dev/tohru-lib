@@ -1872,7 +1872,7 @@ function TohruLib:MakeWindow(WindowConfig)
 	})
 	
 
-	
+	end
 	return TabFunction
 end   
 
