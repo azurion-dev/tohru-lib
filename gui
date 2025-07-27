@@ -6,8 +6,6 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
-local Players = game:GetService("Players")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 
@@ -720,6 +718,19 @@ function TohruLib:MakeWindow(WindowConfig)
 	end	
 
 	AddDraggingFunctionality(DragPoint, MainWindow)
+
+	AddConnection(CloseBtn.MouseButton1Up, function()
+		MainWindow.Visible = false
+		UIHidden = true
+
+		TohruLib:MakeNotification({
+			Name = "🔒 Interface Hidden",
+			Content = "Tap Right Control to reopen the interface",
+			Time = 5
+		})
+
+		WindowConfig.CloseCallback()
+	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input, GameProcessed)
 		if GameProcessed then return end
@@ -1796,11 +1807,15 @@ function TohruLib:MakeWindow(WindowConfig)
 		return ElementFunction   
 	end  
 	
-
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
 	if not UserInputService.TouchEnabled then
 		return -- se não for mobile, não cria nada
 	end
+
+	local player = Players.LocalPlayer
 
 -- Criar GUI
 	local gui = Instance.new("ScreenGui")
